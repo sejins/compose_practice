@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.widget.Space
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -31,30 +34,41 @@ class MainActivity : ComponentActivity() {
             PlaygroundTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-                    MaseratiSelectableCard()
+                    val winnerList = List(15) { Person("Poby") }
+                    ShowMaseratiSelectableCardList(winningList = winnerList)
                 }
             }
         }
     }
 }
 
+data class Person(val name: String)
+
+@ExperimentalMaterialApi
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun ShowMaseratiSelectableCardList(winningList: List<Person>) {
+    LazyColumn {
+        items(winningList) { winner ->
+            MaseratiSelectableCard(winner = winner)
+        }
+    }
 }
 
 @ExperimentalMaterialApi
 @Composable
-fun MaseratiSelectableCard() {
+fun MaseratiSelectableCard(winner: Person) {
 
     var selected by remember { mutableStateOf(false)}
 
-    val radius: Dp = if (selected) 30.dp else 0.dp
-
+    val radius: Dp by animateDpAsState(
+        targetValue = if (selected) 30.dp else 0.dp
+    )
 
     Card(
         shape = RoundedCornerShape(topStart = radius),
         onClick = {selected = !selected},
+        modifier = Modifier.padding(all = 4.dp),
+        backgroundColor = if (selected) Color.LightGray else MaterialTheme.colors.surface
     ) {
         Row {
             Box(contentAlignment = Alignment.Center) {
@@ -76,7 +90,14 @@ fun MaseratiSelectableCard() {
             Column {
                 Text(
                     text = "Maserati Ghibli",
-                    style = MaterialTheme.typography.subtitle1
+                    style = MaterialTheme.typography.h6
+                )
+
+                Spacer(modifier = Modifier.padding(vertical = 10.dp))
+
+                Text(
+                    text = winner.name,
+                    style = MaterialTheme.typography.body1
                 )
             }
 
@@ -90,14 +111,6 @@ fun MaseratiSelectableCard() {
 @Composable
 fun PreviewMaseratiSelectableCard() {
     PlaygroundTheme {
-        MaseratiSelectableCard()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    PlaygroundTheme {
-        Greeting("Android")
+        MaseratiSelectableCard(Person("Poby"))
     }
 }
