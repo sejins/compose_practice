@@ -3,14 +3,8 @@ package com.jjinse.codelab_basic
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +28,37 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PobyApp(list: List<String>) {
 
-    Column(modifier = Modifier.padding(vertical = 4.dp)) {
-        for(name in list) {
-            Greeting(name = name)
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    if (shouldShowOnboarding) {
+        OnboardingScreen { shouldShowOnboarding = false }
+    } else {
+        Column(
+            modifier = Modifier.padding(vertical = 4.dp),
+        ) {
+            for(name in list) {
+                Greeting(name = name)
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingScreen(onContinueClicked: () -> Unit) {
+
+    Surface {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            Text(text = "Welcome to the Basic Codelab!")
+
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
+            Button(onClick = onContinueClicked) {
+                Text(text = "Continue")
+            }
         }
     }
 }
@@ -60,7 +82,9 @@ fun Greeting(name: String) {
             modifier = Modifier.padding(all = 24.dp),
         ) {
             Column(
-                modifier = Modifier.weight(1f).padding(bottom = extraPadding)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(bottom = extraPadding)
             ) {
                 Text(text = "Hello,")
                 Text(text = name)
@@ -73,6 +97,12 @@ fun Greeting(name: String) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun OnboardingScreenPreview() {
+    OnboardingScreen(onContinueClicked = {} )
 }
 
 @Preview(showBackground = true, widthDp = 320)
