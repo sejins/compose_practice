@@ -11,7 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,30 +41,35 @@ private fun PobyApp(list: List<String>) {
     }
 }
 
+/** 상위 레벨에서 다수의 Greeting 호출에 의해 생성된 UI 컴포넌트들은  각자의 상태 버전을 갖게 된다. (Ex. expanded) **/
 @Composable
 fun Greeting(name: String) {
 
-    // import androidx.compose.material.Surface 같은 compose material 컴포넌트는 공통 작업에 대한 기능을 포함한다.
-    // 예를들어 color 를 primary 로 가져가는 경우, 텍스트 색상은 onPrimary 값으로 세팅해야하는 것을 compose 는 알고있다.
+    // 버튼 클릭 이벤트에 대해 카드(?) 의 크기를 변경하기 위한 expanded 플래그의 적절한 위치는 Greeting 컴포저블이다.
+    var expanded by remember {
+        mutableStateOf(false)
+    }
+
+    val extraPadding = if (expanded) 48.dp else 0.dp
+
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(
             modifier = Modifier.padding(all = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f).padding(bottom = extraPadding)
             ) {
                 Text(text = "Hello,")
                 Text(text = name)
             }
 
             OutlinedButton(
-                onClick = { /*TODO*/ }
+                onClick = { expanded = !expanded }
             ) {
-                Text(text = "Show more")
+                Text(text = if (expanded) "Show less" else "Show more" )
             }
         }
     }
