@@ -33,13 +33,7 @@ private fun PobyApp(list: List<String>) {
     if (shouldShowOnboarding) {
         OnboardingScreen { shouldShowOnboarding = false }
     } else {
-        Column(
-            modifier = Modifier.padding(vertical = 4.dp),
-        ) {
-            for(name in list) {
-                Greeting(name = name)
-            }
-        }
+        Greetings(list = list)
     }
 }
 
@@ -59,6 +53,17 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
             Button(onClick = onContinueClicked) {
                 Text(text = "Continue")
             }
+        }
+    }
+}
+
+@Composable
+fun Greetings(list: List<String>) {
+    Column(
+        modifier = Modifier.padding(vertical = 4.dp),
+    ) {
+        for(name in list) {
+            Greeting(name = name)
         }
     }
 }
