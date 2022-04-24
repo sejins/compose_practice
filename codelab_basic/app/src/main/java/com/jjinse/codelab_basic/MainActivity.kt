@@ -3,6 +3,9 @@ package com.jjinse.codelab_basic
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -80,7 +83,15 @@ fun Greeting(name: String) {
         mutableStateOf(false)
     }
 
-    val extraPadding = if (expanded) 48.dp else 0.dp
+    // 0dp 가 되는 경우 에러가 발생한다. spring animation spec 때문에 0dp 의 지점에서 padding 값이 음수로 떨어지기 때문이다.
+    // TODO 수정 필요.
+    val extraPadding by animateDpAsState(
+        targetValue = if (expanded) 48.dp else 0.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
 
     Surface(
         color = MaterialTheme.colors.primary,
