@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Codelab_layoutsTheme {
-                PhotographerCard()
+                LayoutCodelab()
             }
         }
     }
@@ -44,8 +44,33 @@ fun LayoutCodelab() {
                     IconButton(onClick = { /* do something */ }) {
                         Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Favorite")
                     }
+                    IconButton(onClick = { /*do something*/ }) {
+                        Icon(imageVector = Icons.Filled.Share, contentDescription = "Share")
+                    }
                 }
             )
+        },
+        bottomBar = {
+            BottomNavigation() {
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = { /* do something */ },
+                    icon = { Icon(imageVector = Icons.Filled.Phone, contentDescription = "Phone") },
+                    label = { Text(text = "phone") }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = { /* do something */ },
+                    icon = { Icon(imageVector = Icons.Filled.Message, contentDescription = "Message") },
+                    label = { Text(text = "message") }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = { /* do something */ },
+                    icon = { Icon(imageVector = Icons.Filled.Book, contentDescription = "Book") },
+                    label = { Text(text = "book") }
+                )
+            }
         }
     ) { innerPadding ->
         // 현재 BodyContent 컴포저블은 modifier 를 매개변수로 받고 있기 때문에 추가 설정이 두가지 위치에서 가능하다.
