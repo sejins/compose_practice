@@ -4,15 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jjinse.codelab_basic.ui.theme.Codelab_basicTheme
 
-private val list = listOf("poby", "roki", "thor")
+private val list = listOf("Poby", "Roki", "Thor", "Tony", "Steve", "Vision", "Wanda", "Mark", "Steven", "Peter")
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,7 +31,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 private fun PobyApp(list: List<String>) {
 
-    var shouldShowOnboarding by remember { mutableStateOf(true) }
+    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true) }
 
     if (shouldShowOnboarding) {
         OnboardingScreen { shouldShowOnboarding = false }
@@ -59,11 +62,11 @@ fun OnboardingScreen(onContinueClicked: () -> Unit) {
 
 @Composable
 fun Greetings(list: List<String>) {
-    Column(
-        modifier = Modifier.padding(vertical = 4.dp),
-    ) {
-        for(name in list) {
-            Greeting(name = name)
+    LazyColumn(
+        modifier = Modifier.padding(vertical = 4.dp)
+    ){
+        items(list) { name ->
+            Greeting(name)
         }
     }
 }
@@ -73,7 +76,7 @@ fun Greetings(list: List<String>) {
 fun Greeting(name: String) {
 
     // 버튼 클릭 이벤트에 대해 카드(?) 의 크기를 변경하기 위한 expanded 플래그의 적절한 위치는 Greeting 컴포저블이다.
-    var expanded by remember {
+    var expanded by rememberSaveable {
         mutableStateOf(false)
     }
 
