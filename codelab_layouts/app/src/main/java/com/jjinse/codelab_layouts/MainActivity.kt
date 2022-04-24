@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -27,6 +29,40 @@ class MainActivity : ComponentActivity() {
                 PhotographerCard()
             }
         }
+    }
+}
+
+@Composable
+fun LayoutCodelab() {
+    Scaffold(
+        topBar = {
+            TopAppBar( // 컴포즈에서 제공되는 상단 액션바에 해당하는 컴포저블. 이외에도 BottomNavigation, BottomDrawer 등 다양한 컴포저블이 존재한다.
+                title = {
+                    Text(text = "LayoutCodelab")
+                },
+                actions = { // 작업 항목 슬롯에 해당하는 actions 는 기본적으로 Row 를 사용하기 때문에 해당 블록은 RowScope 에 해당한다.
+                    IconButton(onClick = { /* do something */ }) {
+                        Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Favorite")
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        // 현재 BodyContent 컴포저블은 modifier 를 매개변수로 받고 있기 때문에 추가 설정이 두가지 위치에서 가능하다.
+        // 1. 컴포저블 호출 시 : 컴포저블의 케이스 별로 설정을 주고 싶은 경우 사용한다.
+        // 2. 컴포저블 내부 : 모든 컴포저블에 고유한 설정일 때 사용한다.
+        BodyContent(
+            Modifier
+                .padding(innerPadding)
+                .padding(all = 8.dp))
+    }
+}
+
+@Composable
+fun BodyContent(modifier: Modifier = Modifier) {
+    Column(modifier = modifier) {
+        Text(text = "Hi there!")
+        Text(text = "Thanks for going through the Layouts codelab")
     }
 }
 
@@ -66,6 +102,13 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
     }
 }
 
+@Preview
+@Composable
+fun LayoutCodelabPreview() {
+    Codelab_layoutsTheme {
+        LayoutCodelab()
+    }
+}
 
 @Preview(showBackground = true)
 @Composable
