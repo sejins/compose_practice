@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberImagePainter
 import com.jjinse.codelab_layouts.ui.theme.Codelab_layoutsTheme
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +83,44 @@ fun LayoutCodelab() {
 //        BodyContent(
 //            Modifier.padding(innerPadding).padding(all = 8.dp)
 //        )
-        ImageList()
+        ScrollingList()
+    }
+}
+
+@Composable
+fun ScrollingList() {
+
+    val listSize = 100
+
+    // save the scrolling position with this state
+    val scrollState = rememberLazyListState()
+
+    // save the coroutine scope where animated scroll will be executed
+    val coroutineScope = rememberCoroutineScope()
+
+    Column {
+        Row {
+            Button(onClick = {
+                coroutineScope.launch {
+                    scrollState.animateScrollToItem(0)
+                }
+            }) {
+                Text(text = "Scroll to the top")
+            }
+            Button(onClick = {
+                coroutineScope.launch {
+                    scrollState.animateScrollToItem(listSize - 1)
+                }
+            }) {
+                Text(text = "Scroll to the bottom")
+            }
+        }
+
+        LazyColumn(state = scrollState) {
+            items(100) {
+                ImageListItem(index = it)
+            }
+        }
     }
 }
 
@@ -100,19 +139,6 @@ fun ImageListItem(index: Int) {
             text = "Item #$index",
             style = MaterialTheme.typography.subtitle1
         )
-    }
-}
-
-@Composable
-fun ImageList() {
-
-    // We save the scrolling position with this state that can also be used to programmatically scroll the list.
-    val scrollState = rememberLazyListState()
-
-    LazyColumn(state = scrollState) {
-        items(100) {
-            ImageListItem(index = it)
-        }
     }
 }
 
