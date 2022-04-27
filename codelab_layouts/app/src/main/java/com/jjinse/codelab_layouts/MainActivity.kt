@@ -3,9 +3,10 @@ package com.jjinse.codelab_layouts
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -19,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.jjinse.codelab_layouts.ui.theme.Codelab_layoutsTheme
 
 class MainActivity : ComponentActivity() {
@@ -76,10 +78,41 @@ fun LayoutCodelab() {
         // 현재 BodyContent 컴포저블은 modifier 를 매개변수로 받고 있기 때문에 추가 설정이 두가지 위치에서 가능하다.
         // 1. 컴포저블 호출 시 : 컴포저블의 케이스 별로 설정을 주고 싶은 경우 사용한다.
         // 2. 컴포저블 내부 : 모든 컴포저블에 고유한 설정일 때 사용한다.
-        BodyContent(
-            Modifier
-                .padding(innerPadding)
-                .padding(all = 8.dp))
+//        BodyContent(
+//            Modifier.padding(innerPadding).padding(all = 8.dp)
+//        )
+        ImageList()
+    }
+}
+
+@Composable
+fun ImageListItem(index: Int) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = rememberImagePainter(data = "https://developer.android.com/images/brand/Android_Robot.png"), // coil
+            contentDescription = "Android Logo",
+            modifier = Modifier.size(50.dp)
+        )
+        Spacer(modifier = Modifier.width(10.dp))
+        Text(
+            text = "Item #$index",
+            style = MaterialTheme.typography.subtitle1
+        )
+    }
+}
+
+@Composable
+fun ImageList() {
+
+    // We save the scrolling position with this state that can also be used to programmatically scroll the list.
+    val scrollState = rememberLazyListState()
+
+    LazyColumn(state = scrollState) {
+        items(100) {
+            ImageListItem(index = it)
+        }
     }
 }
 
