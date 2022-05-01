@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,8 +41,40 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** custom layout **/
+@Composable
+fun MyCustomColumn(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+        // measure and position children given constraints logic here
 
-// custom layout modifier
+        // List of measured children
+        val placeables = measurables.map { measurable ->
+            // measure each child
+            measurable.measure(constraints)
+        }
+
+        var yPosition = 0
+
+        // Set the size of the layout as big as it can
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            // Place children in the parent layout
+
+            placeables.forEach {
+                it.placeRelative(x = 0, yPosition)
+                yPosition += it.height
+            }
+        }
+    }
+}
+
+
+/** custom layout modifier **/ 
 fun Modifier.firstBaselineToTop(
     firstBaselineToTop: Dp
 ) = this.then(
@@ -108,10 +141,10 @@ fun LayoutCodelab() {
         // 현재 BodyContent 컴포저블은 modifier 를 매개변수로 받고 있기 때문에 추가 설정이 두가지 위치에서 가능하다.
         // 1. 컴포저블 호출 시 : 컴포저블의 케이스 별로 설정을 주고 싶은 경우 사용한다.
         // 2. 컴포저블 내부 : 모든 컴포저블에 고유한 설정일 때 사용한다.
-//        BodyContent(
-//            Modifier.padding(innerPadding).padding(all = 8.dp)
-//        )
-        ScrollingList()
+        BodyContent(
+            Modifier.padding(innerPadding).padding(all = 8.dp)
+        )
+//        ScrollingList()
     }
 }
 
@@ -172,9 +205,12 @@ fun ImageListItem(index: Int) {
 
 @Composable
 fun BodyContent(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Text(text = "Hi there!")
-        Text(text = "Thanks for going through the Layouts codelab")
+    MyCustomColumn(modifier.padding(8.dp)) {
+        Text(text = "Hello")
+        Text(text = "Hello1")
+        Text(text = "Hello2")
+        Text(text = "Hello3")
+        Text(text = "Hello4")
     }
 }
 
@@ -212,6 +248,13 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
             }
         }
     }
+}
+
+
+@Preview
+@Composable
+fun MyCustomColumnPreview() {
+    BodyContent()
 }
 
 @Preview
