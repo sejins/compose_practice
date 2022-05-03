@@ -48,6 +48,45 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * 내장 기능을 사용하면 하위 요소가 실제로 측정되기 전에 하위 요소를 쿼리할 수 있다.
+ *
+ * (min|max)IntrinsicWidth : 이 height 에서 콘텐츠를 적절하게 그릴 수 있는 최소/최대 width 는 무엇인가요?
+ * (min|max)IntrinsicHeight : 이 width 에서 콘텐츠를 적절하게 그릴 수 있는 최소/최대 height 는 무엇인가요?
+ **/
+
+@Composable
+fun TwoText(
+    modifier: Modifier = Modifier,
+    text1: String,
+    text2: String
+) {
+    Row(modifier = modifier.height(IntrinsicSize.Min).width(IntrinsicSize.Min)) {
+
+        Text(
+            modifier = Modifier.weight(1f).wrapContentWidth(Alignment.CenterHorizontally).padding(4.dp).height(50.dp),
+            text = text1
+        )
+
+        Divider(color = Color.Black, modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp))
+
+        Text(
+            modifier = Modifier.weight(1f).wrapContentWidth(Alignment.CenterHorizontally).padding(4.dp),
+            text = text2
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TwoTextPreview() {
+    Codelab_layoutsTheme {
+        TwoText(text1 = "text1", text2 = "text2")
+    }
+}
+
 @Composable
 fun Chip(
     modifier:Modifier = Modifier,
