@@ -18,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
@@ -30,12 +31,103 @@ import coil.compose.rememberImagePainter
 import com.jjinse.codelab_layouts.ui.theme.Codelab_layoutsTheme
 import kotlinx.coroutines.launch
 
+val topics = listOf(
+    "Arts & Crafts", "Beauty", "Books", "Business", "Comics", "Culinary",
+    "Design", "Fashion", "Film", "History", "Maths", "Music", "People", "Philosophy",
+    "Religion", "Social sciences", "Technology", "TV", "Writing"
+)
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             Codelab_layoutsTheme {
                 LayoutCodelab()
+            }
+        }
+    }
+}
+
+@Composable
+fun Chip(
+    modifier:Modifier = Modifier,
+    text: String
+) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(color = Color.Black, width = Dp.Hairline),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(modifier = Modifier
+                .size(16.dp)
+                .background(MaterialTheme.colors.secondary))
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = text)
+        }
+    }
+}
+
+/**
+ * custom staggered grid layout
+ * 현재 custom grid layout 자체는 스크롤이 불가능
+ **/
+@Composable
+fun StaggeredGrid(
+    modifier: Modifier = Modifier,
+    rows: Int = 3,
+    content: @Composable () -> Unit
+) {
+    Layout(
+        modifier = modifier,
+        content = content
+    ) { measurables, constraints ->
+
+        // Keep track of the width of each row
+        val rowWidths = IntArray(rows) { 0 }
+
+        // Keep track of the max height of each row
+        val rowHeights = IntArray(rows) { 0 }
+
+        // measurement of each Composable
+        val placeables = measurables.mapIndexed { index, measurable ->
+            val placeable = measurable.measure(constraints)
+
+            val row = index % rows
+            rowWidths[row] += placeable.width
+            rowHeights[row] = Math.max(rowHeights[row], placeable.height)
+
+            placeable
+        }
+
+        // Grid's width is the widest row
+        val gridWidth =
+            rowWidths.maxOrNull()?.coerceIn(constraints.minWidth.rangeTo(constraints.maxWidth)) ?: constraints.minWidth
+
+        // Grid's height is the sum of the tallest element of each row
+        val gridHeight =
+            rowHeights.sumOf { it }.coerceIn(constraints.minHeight.rangeTo(constraints.maxHeight))
+
+        val rowY = IntArray(rows) { 0 }
+        for (i in 1 until rows) {
+            rowY[i] = rowY[i - 1] + rowHeights[i - 1]
+        }
+
+        // Set the size of the parent layout
+        layout(gridWidth, gridHeight) {
+            // trace rowX per each row
+            val rowX = IntArray(rows) { 0 }
+
+            placeables.forEachIndexed { index, placeable ->
+                val row = index % rows
+                placeable.placeRelative(
+                    x = rowX[row],
+                    y = rowY[row]
+                )
+                rowX[row] += placeable.width
             }
         }
     }
@@ -72,7 +164,6 @@ fun MyCustomColumn(
         }
     }
 }
-
 
 /** custom layout modifier **/ 
 fun Modifier.firstBaselineToTop(
@@ -142,7 +233,9 @@ fun LayoutCodelab() {
         // 1. 컴포저블 호출 시 : 컴포저블의 케이스 별로 설정을 주고 싶은 경우 사용한다.
         // 2. 컴포저블 내부 : 모든 컴포저블에 고유한 설정일 때 사용한다.
         BodyContent(
-            Modifier.padding(innerPadding).padding(all = 8.dp)
+            Modifier
+                .padding(innerPadding)
+                .padding(all = 8.dp)
         )
 //        ScrollingList()
     }
@@ -205,12 +298,13 @@ fun ImageListItem(index: Int) {
 
 @Composable
 fun BodyContent(modifier: Modifier = Modifier) {
-    MyCustomColumn(modifier.padding(8.dp)) {
-        Text(text = "Hello")
-        Text(text = "Hello1")
-        Text(text = "Hello2")
-        Text(text = "Hello3")
-        Text(text = "Hello4")
+    // StaggeredGrid 는 자체적으로 스크롤이 불가능한 커스텀 레이아웃 형태이기 때문에 스크롤 가능한 Row 로 래핑
+    Row(modifier = modifier.horizontalScroll(rememberScrollState())) {
+        StaggeredGrid(rows = 3) {
+            topics.forEach {
+                Chip(modifier = Modifier.padding(8.dp), text = it)
+            }
+        }
     }
 }
 
@@ -250,6 +344,11 @@ fun PhotographerCard(modifier: Modifier = Modifier) {
     }
 }
 
+@Preview
+@Composable
+fun ChipPreview() {
+    Chip(text = "This is a test")
+}
 
 @Preview
 @Composable
